@@ -3,19 +3,23 @@ import time
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.select import Select
+
+# from selenium.webdriver.support.select import Select
 
 # クロームの立ち上げ
 driver = webdriver.Chrome()
 
 # ページ接続
-driver.get("https://experience.dev-salon.com/register/")
+driver.get("https://experience.dev-salon.com/")
+# 会員登録
+touroku = driver.find_element(By.CLASS_NAME, "btn_member")
+touroku.click()
 # 無料会員選択
-freeuser = driver.find_element(By.XPATH, "/html/body/main/div[2]/div/div/div[1]/div/div/section[2]/div[3]/a")
+freeuser = driver.find_element(By.XPATH, "/html/body/main/div[2]/div/div/div[1]/div/section[1]/div[3]/a")
 freeuser.click()
 
-filecsv_userNm = "user.csv"
-with open(filecsv_userNm, encoding="utf-8-sig", newline="") as f:
+filecsv = "csv/freeuser.csv"
+with open(filecsv, encoding="utf-8-sig", newline="") as f:
     csvreader = csv.reader(f)
     for row in csvreader:
         csv_userNm = row[0]
@@ -32,18 +36,21 @@ with open(filecsv_userNm, encoding="utf-8-sig", newline="") as f:
         csv_telNo = row[11]
 
         # 新規登録ページの要素
-        userNm = driver.find_element(By.XPATH, '//*[@id="user_login-307"]')
-        userPass = driver.find_element(By.XPATH, '//*[@id="user_password-307"]')
-        userPass2 = driver.find_element(By.XPATH, '//*[@id="confirm_user_password-307"]')
-        mailAddress = driver.find_element(By.XPATH, '//*[@id="user_email-307"]')
-        houjinNm = driver.find_element(By.XPATH, '//*[@id="shop_name-307"]')
-        houjinNo = driver.find_element(By.XPATH, '//*[@id="corporate_numbe-307"]')
-        busyo = driver.find_element(By.XPATH, '//*[@id="manager_department-307"]')
-        yakusyoku = driver.find_element(By.XPATH, '//*[@id="manager_title-307"]')
-        tantouSei = driver.find_element(By.XPATH, '//*[@id="last_name-307"]')
-        tantouMei = driver.find_element(By.XPATH, '//*[@id="first_name-307"]')
-        Address = driver.find_element(By.XPATH, '//*[@id="address-307"]')
-        tel = driver.find_element(By.XPATH, '//*[@id="mobile_number-307"]')
+        userNm = driver.find_element(By.XPATH, '//*[@id="user_login-758"]')
+        userPass = driver.find_element(By.XPATH, '//*[@id="user_password-758"]')
+        userPass2 = driver.find_element(By.XPATH, '//*[@id="confirm_user_password-758"]')
+        mailAddress = driver.find_element(By.XPATH, '//*[@id="user_email-758"]')
+        houjinNm = driver.find_element(By.XPATH, '//*[@id="shop_name-758"]')
+        houjinNo = driver.find_element(By.XPATH, '//*[@id="corporate_number-758"]')
+        busyo = driver.find_element(By.XPATH, '//*[@id="department-758"]')
+        yakusyoku = driver.find_element(By.XPATH, '//*[@id="job_title-758"]')
+        tantouSei = driver.find_element(By.XPATH, '//*[@id="last_name-758"]')
+        tantouMei = driver.find_element(By.XPATH, '//*[@id="first_name-758"]')
+        Address = driver.find_element(By.XPATH, '//*[@id="address-758"]')
+        tel = driver.find_element(By.XPATH, '//*[@id="mobile_number-758"]')
+        kiyaku = driver.find_element(
+            By.XPATH, "/html/body/main/div[2]/div/div/div[1]/div/div[2]/div/form/div[2]/div[2]/label/span[1]/i"
+        )
         addbutton = driver.find_element(By.XPATH, '//*[@id="um-submit-btn"]')
 
         # 新規登録ページにセット
@@ -59,24 +66,27 @@ with open(filecsv_userNm, encoding="utf-8-sig", newline="") as f:
         tantouMei.send_keys(csv_tantouMei)
         Address.send_keys(csv_add)
         tel.send_keys(csv_telNo)
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+
         time.sleep(3)
         # 登録ボタンクリック
+        kiyaku.click()
         addbutton.click()
 
         # 案件トップに遷移
         # 案件トップのログアウトボタンをクリック
-        logout = driver.find_element(By.XPATH, '//*[@id="main-menu"]/li[3]/a')
+        logout = driver.find_element(By.XPATH, "/html/body/header/div/div/div[3]/div/a")
         logout.click()
         time.sleep(5)
 
+        # 会員登録
+        touroku = driver.find_element(By.XPATH, "/html/body/header/div/div/div[3]/div/a[1]")
+        touroku.click()
+        # 無料会員選択
+        freeuser = driver.find_element(By.XPATH, "/html/body/main/div[2]/div/div/div[1]/div/section[1]/div[3]/a")
+        freeuser.click()
 
-time.sleep(5)
-# 画面キャプチャを取得
-# driver.save_screenshot("次へ進む実行後の画面.png")
-
-
-# 5秒終了を待つ
 time.sleep(5)
 
 # クロームの終了処理
-# driver.close()
+driver.close()

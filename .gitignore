@@ -1,0 +1,7 @@
+LICENSE.chromedriver
+
+/dist/
+/build/
+/__pycache__/
+/.vscode/
+/.venv/

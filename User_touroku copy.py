@@ -9,7 +9,7 @@ from selenium.webdriver.support.select import Select
 driver = webdriver.Chrome()
 
 # ページ接続
-driver.get("http://localhost/wordpress/register/")
+driver.get("https://demo-matchingsystem.dev-salon.com/sitenew/register/")
 
 
 filename = "sample.csv"
@@ -58,6 +58,13 @@ with open(filename, encoding="utf-8-sig", newline="") as f:
         button_prof = driver.find_element(By.XPATH, '//*[@id="page-10"]/div/div/div/form/div[4]/div[2]/div[1]/input')
         button_prof.click()
         time.sleep(5)
+        # アバターをクリック
+        avatar = driver.find_element(By.XPATH, '//*[@id="page-10"]/div/div/div/div[1]/div[2]/a/img')
+        avatar.click()
+        avatar_up = driver.find_element(By.XPATH, '//*[@id="page-10"]/div/div/div/div[1]/div[2]/div[2]/div/ul/li[1]/a')
+        avatar_up.click()
+        # アップロードをクリック
+        avatar_up = driver.find_element(By.XPATH, '//*[@id="ajax-upload-id-1695186356882"]')
 
         # マイページのログアウトボタンをクリック
         logout = driver.find_element(By.XPATH, '//*[@id="main-menu"]/li[3]/a')
