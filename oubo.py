@@ -127,7 +127,6 @@ with open(filecsv, encoding="utf-8-sig", newline="") as f:
         # 利用規約に同意して公開する
         button2 = driver.find_element(By.XPATH, '//*[@id="apply_confirm_submit"]')
         driver.execute_script("arguments[0].click();", button2)
-
         time.sleep(2)
 
         userNm = csv_userNm
