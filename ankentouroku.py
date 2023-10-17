@@ -18,10 +18,10 @@ driver = webdriver.Chrome()
 # ログインページ接続
 driver.get("https://demo.webmatchingsystem.com/login/")
 
-lineCnt = 0
+userName = ""
 filecsv = "csv/anken.csv"
 with open(filecsv, encoding="utf-8-sig", newline="") as f:
-    csvreader = csv.reader(f)  # まず有料会員が10件読み込まれる
+    csvreader = csv.reader(f)
     for row in csvreader:
         csv_userNm = row[0]
         csv_pass = row[1]
@@ -41,13 +41,22 @@ with open(filecsv, encoding="utf-8-sig", newline="") as f:
         # csv_file1 = row[15]
         # csv_file2 = row[16]
 
-        if lineCnt == 0:
+        if userName != "" and userName != csv_userNm:
+            # ２回目以降の読み込みでユーザーが変わっていたらログアウト
+            logoutBtn = driver.find_element(By.XPATH, "/html/body/header/div/div/div[3]/div/a")
+            logoutBtn.click()
+
+        # ユーザーが変わっていたらログイン
+        if userName != csv_userNm:
+            # ログイン画面に遷移
+            loginBtn = driver.find_element(By.XPATH, "/html/body/header/div/div/div[3]/div/a[2]")
+            loginBtn.click()
             # ログイン
             loginUser = driver.find_element(By.XPATH, '//*[@id="username-6"]')
             loginPass = driver.find_element(By.XPATH, '//*[@id="user_password-6"]')
-            loginBtn = driver.find_element(By.XPATH, '//*[@id="um-submit-btn"]')
             loginUser.send_keys(csv_userNm)
             loginPass.send_keys(csv_pass)
+            loginBtn = driver.find_element(By.XPATH, '//*[@id="um-submit-btn"]')
             loginBtn.click()
 
         # 案件登録ボタンをクリック
@@ -111,30 +120,15 @@ with open(filecsv, encoding="utf-8-sig", newline="") as f:
             tempFile2.send_keys(csv_file2)
         time.sleep(10)
         """
-        # スクロール
-        driver.find_element(By.TAG_NAME, "body").click()
-        for i in range(5):
-            driver.find_element(By.TAG_NAME, "body").send_keys(Keys.PAGE_DOWN)
 
-        # 内容確認に進むクリック
+        # 内容確認に進むクリック(フォーカス移動)
         button1 = driver.find_element(By.XPATH, '//*[@id="work_edit_next"]')
-        button1.click()
+        driver.execute_script("arguments[0].click();", button1)
         time.sleep(2)
+
         # 利用規約に同意して公開する
         button2 = driver.find_element(By.XPATH, '//*[@id="work_confirm_submit"]')
-        button2.click()
+        driver.execute_script("arguments[0].click();", button2)
         time.sleep(2)
 
-        lineCnt += 1
-
-        # ユーザー案件がMAXになったらログアウト後再ログイン
-        if lineCnt == maxCnt:
-            logoutBtn = driver.find_element(By.XPATH, "/html/body/header/div/div/div[3]/div/a")
-            logoutBtn.click()
-
-            loginBtn = driver.find_element(By.XPATH, "/html/body/header/div/div/div[3]/div/a[2]")
-            loginBtn.click()
-            lineCnt = 0
-            userCnt += 1
-            if userCnt == 10:
-                maxCnt = FREEMAXCOUNT
+        userName = csv_userNm
