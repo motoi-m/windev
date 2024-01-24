@@ -5,11 +5,13 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
+import utilize
+
 # クロームの立ち上げ
 driver = webdriver.Chrome()
 
 # ログインページ接続
-driver.get("https://stage.webmatchingsystem.com/")
+driver.get(utilize.siteUrl() + "login/")
 
 userNm = ""
 filecsv = "csv/oubo.csv"
@@ -54,17 +56,13 @@ with open(filecsv, encoding="utf-8-sig", newline="") as f:
         # 案件検索ボタンをクリック
         ankenSbtn = driver.find_element(By.XPATH, '//*[@id="menu-item-211"]/a')
         ankenSbtn.click()
-        # 案件を検索
+        # 案件名
         srh_title = driver.find_element(By.XPATH, ('//*[@id="bzmp_worklist_search_keyword"]'))  # 案件名
         srh_title.send_keys(csv_title)
-        srh_category1 = driver.find_element(By.XPATH, ('//*[@id="bzmp_worklist_search_category"]'))  # カテゴリー
-        srh_category1.send_keys(csv_cate1)
+
         time.sleep(1)
-        srh_category2 = driver.find_element(By.XPATH, ('//*[@id="bzmp_worklist_search_subcategory"]'))  # サブカテゴリー
-        srh_category2.send_keys(csv_cate2)
-        time.sleep(1)
-        srh_type = driver.find_element(By.XPATH, ('//*[@id="bzmp_worklist_search_type"]'))  # 種別
-        srh_type.send_keys(csv_type)
+        # srh_type = driver.find_element(By.XPATH, ('//*[@id="bzmp_worklist_search_type"]'))  # 種別
+        # srh_type.send_keys(csv_type)
         srhButton = driver.find_element(By.XPATH, ('//*[@id="bzmp_worklist_search_submit"]'))  # 検索ボタン
         srhButton.click()
 
@@ -77,7 +75,8 @@ with open(filecsv, encoding="utf-8-sig", newline="") as f:
         matching_element.click()
         # 案件表示画面から「応募する」をクリック
         ouboButton = driver.find_element(By.XPATH, ('//*[@id="work_view_apply"]'))
-        ouboButton.click()
+        driver.execute_script("arguments[0].click();", ouboButton)
+        time.sleep(2)
 
         # 応募画面の各要素を取得
         budget = driver.find_element(By.XPATH, '//*[@id="apply_edit_price"]')
@@ -99,13 +98,13 @@ with open(filecsv, encoding="utf-8-sig", newline="") as f:
         time.sleep(1)
         # 日へフォーカス後入力
         fromYmd.send_keys(Keys.RIGHT)
-        time.sleep(1)
+        time.sleep(2)
         fromYmd.send_keys(csv_sDay)
-        time.sleep(1)
+        time.sleep(2)
         toYmd.send_keys(csv_eYear)
-        time.sleep(1)
+        time.sleep(2)
         toYmd.send_keys(Keys.RIGHT)
-        time.sleep(1)
+        time.sleep(2)
         toYmd.send_keys(csv_eMonth)
         time.sleep(1)
         toYmd.send_keys(Keys.RIGHT)
