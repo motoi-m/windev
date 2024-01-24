@@ -13,7 +13,7 @@ from selenium.webdriver.common.keys import Keys
 driver = webdriver.Chrome()
 
 # ページ接続
-driver.get("https://experience.dev-salon.com/")
+driver.get("https://pro-craft-partner.com/")
 # 会員登録
 touroku = driver.find_element(By.XPATH, "/html/body/header/div/div/div[3]/div/a[1]")
 touroku.click()
