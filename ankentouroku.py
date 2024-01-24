@@ -4,19 +4,16 @@ import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.select import Select
 
-# 案件を登録(有料会員の発注データ＝ユーザーごとに3件/無料会員の受注データ＝ユーザーごとに2件)
-PAIDMAXCOUNT = 3
-FREEMAXCOUNT = 2
-userCnt = 0
-maxCnt = 1  #
+import utilize
+
+# from selenium.webdriver.support.select import Select
 
 # クロームの立ち上げ
 driver = webdriver.Chrome()
 
 # ログインページ接続
-driver.get("https://demo.webmatchingsystem.com/login/")
+driver.get(utilize.siteUrl())
 
 userName = ""
 filecsv = "csv/anken.csv"
@@ -38,8 +35,9 @@ with open(filecsv, encoding="utf-8-sig", newline="") as f:
         csv_eMonth = row[12]
         csv_eDay = row[13]
         csv_kibou = row[14]
-        # csv_file1 = row[15]
-        # csv_file2 = row[16]
+        csv_file1 = row[15]
+        csv_file2 = row[16]
+        csv_file3 = row[17]
 
         if userName != "" and userName != csv_userNm:
             # ２回目以降の読み込みでユーザーが変わっていたらログアウト
@@ -63,7 +61,15 @@ with open(filecsv, encoding="utf-8-sig", newline="") as f:
         ankenBtn = driver.find_element(By.XPATH, '//*[@id="menu-item-210"]/a')
         ankenBtn.click()
         time.sleep(2)
-
+        category1 = driver.find_element(By.XPATH, '//*[@id="work_edit_category_main"]')
+        category1.send_keys(csv_cate1)
+        time.sleep(2)
+        category2 = driver.find_element(By.XPATH, '//*[@id="work_edit_category_sub"]')
+        category2.send_keys(csv_cate2)
+        time.sleep(1)
+        matchType = driver.find_element(By.XPATH, '//*[@id="work_edit_type"]')
+        matchType.send_keys(csv_type)
+        """
         category1 = driver.find_element(By.CSS_SELECTOR, "#work_edit_category_main")
         select = Select(category1)
         select.select_by_index(int(csv_cate1))
@@ -72,9 +78,10 @@ with open(filecsv, encoding="utf-8-sig", newline="") as f:
         select = Select(category2)
         select.select_by_index(int(csv_cate2))
         time.sleep(3)
-        matchType = driver.find_element(By.CSS_SELECTOR, "#work_edit_type")
-        select = Select(matchType)
-        select.select_by_index(int(csv_type))
+        # matchType = driver.find_element(By.CSS_SELECTOR, "#work_edit_type")
+        # select = Select(matchType)
+        # select.select_by_index(int(csv_type))
+        """
         title = driver.find_element(By.XPATH, '//*[@id="work_edit_title"]')
         detail = driver.find_element(By.XPATH, '//*[@id="work_edit_about_work"]')
         budget = driver.find_element(By.XPATH, '//*[@id="work_edit_price"]')
@@ -113,18 +120,34 @@ with open(filecsv, encoding="utf-8-sig", newline="") as f:
         toYmd.send_keys(csv_eDay)
 
         kibou.send_keys(csv_kibou)
-        """
+
+        driver.execute_script("arguments[0].scrollIntoView();", tempFile2)
         if (csv_file1) != "-":
             tempFile1.send_keys(csv_file1)
-        if (csv_file2) != "-":
-            tempFile2.send_keys(csv_file2)
-        time.sleep(10)
-        """
+            time.sleep(1)
+
+        if (csv_file3) != "-":
+            tempFile2.send_keys(csv_file3)
+            time.sleep(35)
 
         # 内容確認に進むクリック(フォーカス移動)
         button1 = driver.find_element(By.XPATH, '//*[@id="work_edit_next"]')
         driver.execute_script("arguments[0].click();", button1)
         time.sleep(2)
+
+        if (csv_file2) != "-":
+            # 添付ファイルが２つあれば一旦登録画面に戻る
+            button_Back = driver.find_element(By.XPATH, '//*[@id="work_confirm_back"]')
+            driver.execute_script("arguments[0].click();", button_Back)
+
+            tempFile1 = driver.find_element(By.XPATH, '//*[@id="bzmp_work_attachment_file"]')
+            driver.execute_script("arguments[0].scrollIntoView();", tempFile1)
+            tempFile1.send_keys(csv_file2)
+            time.sleep(1)
+            # 内容確認に進むクリック(フォーカス移動)
+            button1 = driver.find_element(By.XPATH, '//*[@id="work_edit_next"]')
+            driver.execute_script("arguments[0].click();", button1)
+            time.sleep(2)
 
         # 利用規約に同意して公開する
         button2 = driver.find_element(By.XPATH, '//*[@id="work_confirm_submit"]')
