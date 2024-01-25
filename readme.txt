@@ -13,5 +13,12 @@
  csvに必要なのキーは案件名、カテゴリとサブカテゴリ（案件名だけだと前方一致で複数取ってきてしまう。ここまで絞ればNext不要になる）
  読み込み側は、単純に一件ずつ読んで検索して、見つかった案件に応募していく。
  Userごとに処理するのでCSVはuserIDの昇順で作成が必要
+//////////////////////////////////////////////////////////////////////
+・ankentouroku.py
+・oubo.py
+・keiyaku.py :選定-受注を行う
+・torihiki.py：契約画面から契約完了まで
+・subtask.py ：loginToKakutei/loginToKeiyaku/review　の３つの関数
+・utilize.py　：ログインURLを設定
 
 
